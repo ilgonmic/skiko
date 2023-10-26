@@ -22,12 +22,6 @@ config.proxies["/resources"] = path.resolve(basePath, "..", "kotlin");
 
 config.preprocessors[wasmTestsLoaderWasm] = ["webpack"];
 
-// WA to make assets visible
-// https://github.com/codymikol/karma-webpack/issues/498#issuecomment-790040818
-const output = {
-    path: path.join(os.tmpdir(), '_karma_webpack_') + Math.floor(Math.random() * 1000000),
-}
-
 config.files = config.files.filter((x) => x !== wasmTestsMjs);
 config.files = config.files.filter((x) => x !== staticLoadMJs);
 
@@ -38,14 +32,9 @@ config.files = [
     {pattern: path.resolve(basePath, "..", "kotlin", "**/*.ttf"), included: false, served: true, watched: false},
     {pattern: path.resolve(basePath, "..", "kotlin", "**/*.txt"), included: false, served: true, watched: false},
     {pattern: path.resolve(basePath, "..", "kotlin", "**/*.json"), included: false, served: true, watched: false},
-    {pattern: `${output.path}/**/*`, included: false, served: true, watched: false},
 ].concat(config.files);
 
 config.files.push(wasmTestsLoaderWasm);
-
-// WA to make assets visible
-// https://github.com/codymikol/karma-webpack/issues/498#issuecomment-790040818
-config.webpack.output = output;
 
 config.webpack.resolve = {
     alias: {
@@ -54,6 +43,34 @@ config.webpack.resolve = {
         SkikoCallbacks: false
     },
 };
+
+function KarmaWebpackOutputFramework(config) {
+    // This controller is instantiated and set during the preprocessor phase.
+    const controller = config.__karmaWebpackController;
+
+    // only if webpack has instantiated its controller
+    if (!controller) {
+        console.warn(
+            "Webpack has not instantiated controller yet.\n" +
+            "Check if you have enabled webpack preprocessor and framework before this framework"
+        )
+        return
+    }
+
+    config.files.push({
+        pattern: `${controller.outputPath}/**/*`,
+        included: false,
+        served: true,
+        watched: false
+    })
+}
+
+const KarmaWebpackOutputPlugin = {
+    'framework:webpack-output': ['factory', KarmaWebpackOutputFramework],
+};
+
+config.plugins.push(KarmaWebpackOutputPlugin);
+config.frameworks.push("webpack-output");
 
 // New opcodes only in Canary
 config.browsers = ["ChromeCanaryHeadlessWasmGc"];

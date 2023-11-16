@@ -169,7 +169,7 @@ val linkWasm = if (supportJs || supportWasm) {
                         "-s", "EXPORT_ES6=1",
                         "-s", "MODULARIZE=1",
                         "-s", "EXPORT_NAME=loadSkikoWASM",
-                        "-s", "EXPORTED_RUNTIME_METHODS=\"[GL]\"",
+                        "-s", "EXPORTED_RUNTIME_METHODS=\"[GL, wasmExports]\"",
                         // "-s", "EXPORT_ALL=1",
                     )
                 )

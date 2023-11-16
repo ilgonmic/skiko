@@ -2,7 +2,7 @@
 // This file is merged with skiko.js and skiko.mjs by emcc
 // It used by setup.js and setup.mjs (see in the same directory)
 
-const { _callCallback, _registerCallback, _releaseCallback, _createLocalCallbackScope, _releaseLocalCallbackScope} = (() => {
+export const { _callCallback, _registerCallback, _releaseCallback, _createLocalCallbackScope, _releaseLocalCallbackScope } = (() => {
     const CB_NULL = {
         callback: () => { throw new RangeError("attempted to call a callback at NULL") },
         data: null

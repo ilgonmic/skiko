@@ -2,7 +2,6 @@ package org.jetbrains.skiko.wasm
 
 import org.jetbrains.skia.impl.NativePointer
 import org.w3c.dom.HTMLCanvasElement
-import kotlin.js.*
 
 @JsFun(
 """() => {
@@ -23,17 +22,6 @@ import kotlin.js.*
 }
 """)
 private external fun createDefaultContextAttributes(): ContextAttributes
-
-private external interface GLInterface {
-    fun createContext(context: HTMLCanvasElement, contextAttributes: ContextAttributes): NativePointer;
-    fun makeContextCurrent(contextPointer: NativePointer): Boolean;
-}
-
-@JsModule("GL")
-internal external object GL : GLInterface {
-    override fun createContext(context: HTMLCanvasElement, contextAttributes: ContextAttributes): Int = definedExternally
-    override fun makeContextCurrent(contextPointer: NativePointer): Boolean = definedExternally
-}
 
 internal actual fun createWebGLContext(canvas: HTMLCanvasElement, attr: ContextAttributes?): NativePointer {
     check(attr === null) { "TODO!" }
